@@ -1,8 +1,8 @@
 === FIAcces ===
 Contributors: tu-usuario
 Tags: accessibility, wcag, a11y, accesibilidad, contrast
-Requires at least: 7.0
-Tested up to: 7.0
+Requires at least: 5.0
+Tested up to: 6.5
 Requires PHP: 7.4
 Stable tag: 1.0.0
 License: GPLv2 or later
