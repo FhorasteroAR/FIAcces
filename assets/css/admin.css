@@ -1,14 +1,14 @@
-/* WP Accesibilidad A11y — Admin Settings page */
+/* FIAcces — Admin Settings page */
 
-.wpa11y-admin-wrap { max-width: 1200px; }
+.fiacces-admin-wrap { max-width: 1200px; }
 
-.wpa11y-admin-intro {
+.fiacces-admin-intro {
     font-size: 14px;
     color: #50575E;
     margin-bottom: 20px;
 }
 
-.wpa11y-admin-grid {
+.fiacces-admin-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 20px;
@@ -16,10 +16,10 @@
 }
 
 @media (max-width: 960px) {
-    .wpa11y-admin-grid { grid-template-columns: 1fr; }
+    .fiacces-admin-grid { grid-template-columns: 1fr; }
 }
 
-.wpa11y-admin-card {
+.fiacces-admin-card {
     background: #FFFFFF;
     border: 1px solid #C3C4C7;
     border-radius: 4px;
@@ -27,39 +27,39 @@
     box-shadow: 0 1px 1px rgba(0, 0, 0, 0.04);
 }
 
-.wpa11y-admin-card h2 {
+.fiacces-admin-card h2 {
     margin-top: 0;
     padding-bottom: 12px;
     border-bottom: 1px solid #DCDCDE;
     font-size: 16px;
 }
 
-.wpa11y-admin-card .form-table th {
+.fiacces-admin-card .form-table th {
     width: 220px;
 }
 
-.wpa11y-admin-actions {
+.fiacces-admin-actions {
     display: flex;
     gap: 10px;
     align-items: center;
     margin-top: 20px;
 }
 
-.wpa11y-admin-actions .submit { margin: 0; padding: 0; }
+.fiacces-admin-actions .submit { margin: 0; padding: 0; }
 
-.wpa11y-admin-info {
+.fiacces-admin-info {
     margin-top: 30px;
     padding: 16px 20px;
     background: #F0F6FC;
     border-left: 4px solid #2271B1;
     border-radius: 2px;
 }
-.wpa11y-admin-info h2 {
+.fiacces-admin-info h2 {
     margin-top: 0;
     font-size: 15px;
 }
 
-.wpa11y-admin-switch {
+.fiacces-admin-switch {
     display: inline-flex;
     align-items: center;
     gap: 8px;

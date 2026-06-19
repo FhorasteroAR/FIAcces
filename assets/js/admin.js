@@ -2,12 +2,12 @@
     'use strict';
     $(function () {
         // Color picker
-        $('.wpa11y-color-picker').wpColorPicker();
+        $('.fiacces-color-picker').wpColorPicker();
 
         // Exportar configuración
-        $('#wpa11y-export-btn').on('click', function () {
+        $('#fiacces-export-btn').on('click', function () {
             $.ajax({
-                url: (window.wpApiSettings && wpApiSettings.root ? wpApiSettings.root : '/wp-json/') + 'wpa11y/v1/settings',
+                url: (window.wpApiSettings && wpApiSettings.root ? wpApiSettings.root : '/wp-json/') + 'fiacces/v1/settings',
                 method: 'GET',
                 beforeSend: function (xhr) {
                     if (window.wpApiSettings && wpApiSettings.nonce) {
@@ -19,7 +19,7 @@
                 var url  = URL.createObjectURL(blob);
                 var a    = document.createElement('a');
                 a.href     = url;
-                a.download = 'wpa11y-settings-' + new Date().toISOString().slice(0, 10) + '.json';
+                a.download = 'fiacces-settings-' + new Date().toISOString().slice(0, 10) + '.json';
                 document.body.appendChild(a);
                 a.click();
                 document.body.removeChild(a);
@@ -30,7 +30,7 @@
         });
 
         // Atajo: solo permite letras A-Z
-        $('#wpa11y_shortcut_key').on('input', function () {
+        $('#fiacces_shortcut_key').on('input', function () {
             this.value = this.value.replace(/[^A-Za-z]/g, '').toUpperCase().slice(0, 1);
         });
     });
