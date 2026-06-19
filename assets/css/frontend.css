@@ -1,0 +1,388 @@
+/* =========================================================
+   WP Accesibilidad A11y — Frontend
+   Cumple WCAG 2.1 AA
+   ========================================================= */
+
+:root {
+    --wpa11y-text-scale: 1;
+    --wpa11y-primary: #2563EB;
+    --wpa11y-primary-dark: #1E40AF;
+    --wpa11y-text: #1F2937;
+    --wpa11y-text-light: #6B7280;
+    --wpa11y-bg: #FFFFFF;
+    --wpa11y-bg-alt: #F9FAFB;
+    --wpa11y-border: #E5E7EB;
+    --wpa11y-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+    --wpa11y-radius: 12px;
+    --wpa11y-radius-sm: 8px;
+}
+
+/* === Aplicar escala de texto global === */
+html { font-size: calc(100% * var(--wpa11y-text-scale)) !important; }
+
+/* === Modos de contraste === */
+html.wpa11y-contrast-high,
+html.wpa11y-contrast-high body {
+    background: #000 !important;
+    color: #FFFF00 !important;
+}
+html.wpa11y-contrast-high a,
+html.wpa11y-contrast-high a * { color: #00FFFF !important; }
+html.wpa11y-contrast-high h1,
+html.wpa11y-contrast-high h2,
+html.wpa11y-contrast-high h3,
+html.wpa11y-contrast-high h4,
+html.wpa11y-contrast-high h5,
+html.wpa11y-contrast-high h6,
+html.wpa11y-contrast-high p,
+html.wpa11y-contrast-high span,
+html.wpa11y-contrast-high li,
+html.wpa11y-contrast-high td { color: #FFFF00 !important; background: transparent !important; }
+
+html.wpa11y-contrast-inverted { filter: invert(1) hue-rotate(180deg); }
+html.wpa11y-contrast-inverted img,
+html.wpa11y-contrast-inverted video,
+html.wpa11y-contrast-inverted picture { filter: invert(1) hue-rotate(180deg); }
+
+html.wpa11y-contrast-gray { filter: grayscale(100%); }
+
+/* El propio panel del plugin no debe invertirse ni desaturarse */
+html.wpa11y-contrast-inverted #wpa11y-root,
+html.wpa11y-contrast-gray #wpa11y-root { filter: invert(1) hue-rotate(180deg); }
+html.wpa11y-contrast-gray #wpa11y-root { filter: grayscale(0%); }
+
+/* === Fuente para dislexia === */
+html.wpa11y-dyslexia,
+html.wpa11y-dyslexia body,
+html.wpa11y-dyslexia p,
+html.wpa11y-dyslexia h1,
+html.wpa11y-dyslexia h2,
+html.wpa11y-dyslexia h3,
+html.wpa11y-dyslexia h4,
+html.wpa11y-dyslexia h5,
+html.wpa11y-dyslexia h6,
+html.wpa11y-dyslexia li,
+html.wpa11y-dyslexia a,
+html.wpa11y-dyslexia span,
+html.wpa11y-dyslexia td,
+html.wpa11y-dyslexia th,
+html.wpa11y-dyslexia button,
+html.wpa11y-dyslexia input,
+html.wpa11y-dyslexia textarea {
+    font-family: "Comic Sans MS", "Trebuchet MS", Verdana, sans-serif !important;
+    letter-spacing: 0.05em !important;
+    word-spacing: 0.1em !important;
+    line-height: 1.6 !important;
+}
+
+/* El panel propio mantiene su tipografía */
+html.wpa11y-dyslexia #wpa11y-root,
+html.wpa11y-dyslexia #wpa11y-root * {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+    letter-spacing: normal !important;
+    word-spacing: normal !important;
+}
+
+/* === Subrayar enlaces === */
+html.wpa11y-underline-links a { text-decoration: underline !important; text-underline-offset: 3px !important; }
+html.wpa11y-underline-links #wpa11y-root a { text-decoration: none !important; }
+
+/* === Pausar animaciones === */
+html.wpa11y-pause-animations *,
+html.wpa11y-pause-animations *::before,
+html.wpa11y-pause-animations *::after {
+    animation-play-state: paused !important;
+    animation-duration: 0s !important;
+    transition: none !important;
+}
+html.wpa11y-pause-animations video,
+html.wpa11y-pause-animations .wpa11y-pause-animations video {
+    /* JS detiene los videos; CSS no puede pausarlos */
+}
+html.wpa11y-pause-animations img[src*=".gif"] {
+    /* CSS no puede pausar GIFs reales; JS los reemplaza por canvas estático */
+}
+
+/* === Cursor === */
+html.wpa11y-cursor-large,
+html.wpa11y-cursor-large body * { cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'><path d='M5 3 L5 30 L13 23 L18 35 L23 33 L18 22 L28 22 Z' fill='black' stroke='white' stroke-width='1.5'/></svg>") 5 3, auto !important; }
+html.wpa11y-cursor-xl,
+html.wpa11y-cursor-xl body * { cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'><path d='M8 5 L8 48 L20 36 L28 56 L36 53 L28 35 L45 35 Z' fill='black' stroke='white' stroke-width='2.5'/></svg>") 8 5, auto !important; }
+
+/* =========================================================
+   Botón flotante (FAB)
+   ========================================================= */
+#wpa11y-root {
+    position: fixed;
+    z-index: 999999;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, sans-serif;
+    font-size: 16px;
+    line-height: 1.5;
+    color: var(--wpa11y-text);
+}
+#wpa11y-root.wpa11y-pos-bottom-right { bottom: 20px; right: 20px; }
+#wpa11y-root.wpa11y-pos-bottom-left  { bottom: 20px; left: 20px; }
+#wpa11y-root.wpa11y-pos-top-right    { top: 20px; right: 20px; }
+#wpa11y-root.wpa11y-pos-top-left     { top: 20px; left: 20px; }
+
+.wpa11y-fab {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: var(--wpa11y-primary);
+    color: #FFFFFF;
+    border: 3px solid #FFFFFF;
+    box-shadow: var(--wpa11y-shadow);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s ease, background 0.2s ease;
+    padding: 0;
+}
+.wpa11y-fab:hover { transform: scale(1.08); background: var(--wpa11y-primary-dark); }
+.wpa11y-fab:focus-visible {
+    outline: 3px solid #FBBF24;
+    outline-offset: 3px;
+}
+
+/* =========================================================
+   Panel modal
+   ========================================================= */
+.wpa11y-panel {
+    position: absolute;
+    width: 360px;
+    max-width: calc(100vw - 40px);
+    max-height: calc(100vh - 100px);
+    background: var(--wpa11y-bg);
+    border-radius: var(--wpa11y-radius);
+    box-shadow: var(--wpa11y-shadow);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    border: 1px solid var(--wpa11y-border);
+}
+#wpa11y-root.wpa11y-pos-bottom-right .wpa11y-panel { bottom: 72px; right: 0; }
+#wpa11y-root.wpa11y-pos-bottom-left  .wpa11y-panel { bottom: 72px; left: 0; }
+#wpa11y-root.wpa11y-pos-top-right    .wpa11y-panel { top: 72px; right: 0; }
+#wpa11y-root.wpa11y-pos-top-left     .wpa11y-panel { top: 72px; left: 0; }
+
+.wpa11y-panel[hidden] { display: none; }
+
+.wpa11y-panel__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    background: var(--wpa11y-primary);
+    color: #FFFFFF;
+    flex-shrink: 0;
+}
+.wpa11y-panel__title {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 700;
+    color: #FFFFFF;
+}
+
+.wpa11y-close {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    color: #FFFFFF;
+    border: 2px solid transparent;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s ease;
+    padding: 0;
+}
+.wpa11y-close:hover { background: rgba(255, 255, 255, 0.35); }
+.wpa11y-close:focus-visible { outline: 3px solid #FBBF24; outline-offset: 2px; }
+
+.wpa11y-panel__body {
+    padding: 16px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    flex: 1;
+}
+
+.wpa11y-panel__footer {
+    padding: 12px 16px;
+    border-top: 1px solid var(--wpa11y-border);
+    background: var(--wpa11y-bg-alt);
+    display: flex;
+    justify-content: flex-end;
+    flex-shrink: 0;
+}
+
+/* === Cards === */
+.wpa11y-card {
+    background: var(--wpa11y-bg-alt);
+    border: 1px solid var(--wpa11y-border);
+    border-radius: var(--wpa11y-radius-sm);
+    padding: 14px;
+}
+.wpa11y-card__title {
+    margin: 0 0 10px;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--wpa11y-text);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+.wpa11y-card__controls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+}
+.wpa11y-card__grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+}
+.wpa11y-card__list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* === Botones === */
+.wpa11y-btn {
+    background: var(--wpa11y-primary);
+    color: #FFFFFF;
+    border: 2px solid transparent;
+    padding: 10px 16px;
+    border-radius: var(--wpa11y-radius-sm);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s ease;
+    min-height: 44px; /* WCAG 2.5.5 - Target Size */
+    min-width: 44px;
+}
+.wpa11y-btn:hover { background: var(--wpa11y-primary-dark); }
+.wpa11y-btn:focus-visible { outline: 3px solid #FBBF24; outline-offset: 2px; }
+
+.wpa11y-btn--secondary {
+    background: transparent;
+    color: var(--wpa11y-text);
+    border: 2px solid var(--wpa11y-border);
+}
+.wpa11y-btn--secondary:hover {
+    background: var(--wpa11y-bg-alt);
+    border-color: var(--wpa11y-text-light);
+}
+
+.wpa11y-value {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--wpa11y-text);
+    min-width: 60px;
+    text-align: center;
+}
+
+/* Toggle buttons (contrast / cursor) */
+.wpa11y-toggle {
+    background: var(--wpa11y-bg);
+    color: var(--wpa11y-text);
+    border: 2px solid var(--wpa11y-border);
+    padding: 10px 12px;
+    border-radius: var(--wpa11y-radius-sm);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-height: 44px;
+    text-align: center;
+}
+.wpa11y-toggle:hover { border-color: var(--wpa11y-primary); }
+.wpa11y-toggle:focus-visible { outline: 3px solid #FBBF24; outline-offset: 2px; }
+.wpa11y-toggle[aria-pressed="true"] {
+    background: var(--wpa11y-primary);
+    color: #FFFFFF;
+    border-color: var(--wpa11y-primary);
+}
+
+/* === Switches === */
+.wpa11y-switch {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    user-select: none;
+    min-height: 44px;
+}
+.wpa11y-switch input { position: absolute; opacity: 0; pointer-events: none; }
+.wpa11y-switch__slider {
+    width: 44px;
+    height: 24px;
+    background: #CBD5E1;
+    border-radius: 999px;
+    position: relative;
+    transition: background 0.2s ease;
+    flex-shrink: 0;
+}
+.wpa11y-switch__slider::before {
+    content: "";
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 18px;
+    height: 18px;
+    background: #FFFFFF;
+    border-radius: 50%;
+    transition: transform 0.2s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+.wpa11y-switch input:checked + .wpa11y-switch__slider {
+    background: var(--wpa11y-primary);
+}
+.wpa11y-switch input:checked + .wpa11y-switch__slider::before {
+    transform: translateX(20px);
+}
+.wpa11y-switch input:focus-visible + .wpa11y-switch__slider {
+    outline: 3px solid #FBBF24;
+    outline-offset: 2px;
+}
+.wpa11y-switch__label {
+    font-size: 14px;
+    color: var(--wpa11y-text);
+    line-height: 1.4;
+}
+
+/* === Screen-reader only === */
+.wpa11y-sr-only {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    padding: 0 !important;
+    margin: -1px !important;
+    overflow: hidden !important;
+    clip: rect(0, 0, 0, 0) !important;
+    white-space: nowrap !important;
+    border: 0 !important;
+}
+
+/* === Responsive === */
+@media (max-width: 480px) {
+    .wpa11y-panel {
+        width: calc(100vw - 30px);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .wpa11y-fab,
+    .wpa11y-btn,
+    .wpa11y-toggle,
+    .wpa11y-switch__slider,
+    .wpa11y-switch__slider::before {
+        transition: none !important;
+    }
+}
