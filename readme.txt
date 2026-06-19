@@ -1,4 +1,4 @@
-=== WP Accesibilidad A11y ===
+=== FIAcces ===
 Contributors: tu-usuario
 Tags: accessibility, wcag, a11y, accesibilidad, contrast
 Requires at least: 7.0
@@ -12,7 +12,7 @@ Plugin de accesibilidad WCAG 2.1 nivel AA. Añade una barra flotante con ajustes
 
 == Description ==
 
-WP Accesibilidad A11y añade una **barra de herramientas de accesibilidad** flotante en el frontend de tu sitio WordPress, permitiendo a los usuarios ajustar la presentación del contenido según sus necesidades.
+FIAcces añade una **barra de herramientas de accesibilidad** flotante en el frontend de tu sitio WordPress, permitiendo a los usuarios ajustar la presentación del contenido según sus necesidades.
 
 **Funcionalidades:**
 
@@ -32,9 +32,9 @@ El plugin cumple con los criterios de los cuatro principios: Perceptible, Operab
 
 == Installation ==
 
-1. Sube la carpeta `wp-accesibilidad-a11y` a `/wp-content/plugins/`.
+1. Sube la carpeta `fiacces` a `/wp-content/plugins/`.
 2. Activa el plugin desde el menú "Plugins" en WordPress.
-3. Configura el plugin en "Ajustes > Accesibilidad A11y".
+3. Configura el plugin en "Ajustes > FIAcces".
 4. Visita el frontend de tu sitio para ver el botón flotante.
 
 == Frequently Asked Questions ==

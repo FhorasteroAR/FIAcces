@@ -2,14 +2,14 @@
 /**
  * Gestión de configuración del plugin.
  *
- * @package WP_Accesibilidad_A11y
+ * @package FIAcces
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-class WPA11Y_Settings {
+class FIAcces_Settings {
 
     public static function init() {
         // Sin hooks por ahora; clase utilitaria.
@@ -40,7 +40,7 @@ class WPA11Y_Settings {
 
     /** Obtiene las opciones guardadas (fusionadas con defaults). */
     public static function get_options() {
-        $saved    = get_option( WPA11Y_OPTION_KEY, array() );
+        $saved    = get_option( FIACCES_OPTION_KEY, array() );
         $defaults = self::get_defaults();
         return wp_parse_args( $saved, $defaults );
     }

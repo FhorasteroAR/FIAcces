@@ -2,16 +2,16 @@
 /**
  * REST API: endpoints internos del plugin.
  *
- * @package WP_Accesibilidad_A11y
+ * @package FIAcces
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-class WPA11Y_REST {
+class FIAcces_REST {
 
-    const NAMESPACE_REST = 'wpa11y/v1';
+    const NAMESPACE_REST = 'fiacces/v1';
 
     public static function init() {
         add_action( 'rest_api_init', array( __CLASS__, 'register_routes' ) );
@@ -19,7 +19,7 @@ class WPA11Y_REST {
 
     public static function register_routes() {
 
-        // GET /wp-json/wpa11y/v1/settings  → exportar configuración (solo admins)
+        // GET /wp-json/fiacces/v1/settings  → exportar configuración (solo admins)
         register_rest_route(
             self::NAMESPACE_REST,
             '/settings',
@@ -30,7 +30,7 @@ class WPA11Y_REST {
             )
         );
 
-        // POST /wp-json/wpa11y/v1/settings → importar configuración (solo admins)
+        // POST /wp-json/fiacces/v1/settings → importar configuración (solo admins)
         register_rest_route(
             self::NAMESPACE_REST,
             '/settings',
@@ -51,7 +51,7 @@ class WPA11Y_REST {
     /** Comprueba que el usuario tenga permisos de admin y un nonce válido. */
     public static function admin_permission( $request ) {
         if ( ! current_user_can( 'manage_options' ) ) {
-            return new WP_Error( 'forbidden', __( 'No tienes permiso.', 'wp-accesibilidad-a11y' ), array( 'status' => 403 ) );
+            return new WP_Error( 'forbidden', __( 'No tienes permiso.', 'fiacces' ), array( 'status' => 403 ) );
         }
         return true;
     }
@@ -59,16 +59,16 @@ class WPA11Y_REST {
     public static function get_settings() {
         return rest_ensure_response(
             array(
-                'version'  => WPA11Y_VERSION,
-                'settings' => WPA11Y_Settings::get_options(),
+                'version'  => FIACCES_VERSION,
+                'settings' => FIAcces_Settings::get_options(),
             )
         );
     }
 
     public static function update_settings( $request ) {
         $input  = (array) $request->get_param( 'settings' );
-        $clean  = WPA11Y_Settings::sanitize( $input );
-        update_option( WPA11Y_OPTION_KEY, $clean );
+        $clean  = FIAcces_Settings::sanitize( $input );
+        update_option( FIACCES_OPTION_KEY, $clean );
         return rest_ensure_response( array( 'saved' => true, 'settings' => $clean ) );
     }
 }

@@ -1,13 +1,13 @@
 /**
- * WP Accesibilidad A11y — Frontend
+ * FIAcces — Frontend
  * Cumple WCAG 2.1 AA
  */
 (function () {
     'use strict';
 
-    var STORAGE_KEY = 'wpa11y_prefs';
-    var settings    = (window.WPA11Y && window.WPA11Y.settings) || {};
-    var i18n        = (window.WPA11Y && window.WPA11Y.i18n) || {};
+    var STORAGE_KEY = 'fiacces_prefs';
+    var settings    = (window.FIAcces && window.FIAcces.settings) || {};
+    var i18n        = (window.FIAcces && window.FIAcces.i18n) || {};
 
     // Estado actual del usuario
     var state = {
@@ -30,7 +30,7 @@
             if (raw) Object.assign(state, JSON.parse(raw));
         } catch (e) {
             // localStorage bloqueado: usar cookie fallback
-            var match = document.cookie.match(/(?:^|;\s*)wpa11y_prefs=([^;]+)/);
+            var match = document.cookie.match(/(?:^|;\s*)fiacces_prefs=([^;]+)/);
             if (match) {
                 try { Object.assign(state, JSON.parse(decodeURIComponent(match[1]))); } catch (_) {}
             }
@@ -45,7 +45,7 @@
             // Fallback a cookies (1 año)
             var expires = new Date();
             expires.setFullYear(expires.getFullYear() + 1);
-            document.cookie = 'wpa11y_prefs=' + encodeURIComponent(data) +
+            document.cookie = 'fiacces_prefs=' + encodeURIComponent(data) +
                               '; expires=' + expires.toUTCString() +
                               '; path=/; SameSite=Lax';
         }
@@ -56,17 +56,17 @@
         var html = document.documentElement;
 
         // Limpiar clases previas
-        html.className = html.className.replace(/wpa11y-(contrast|cursor)-\S+/g, '')
-                                       .replace(/wpa11y-(dyslexia|underline-links|pause-animations)/g, '')
+        html.className = html.className.replace(/fiacces-(contrast|cursor)-\S+/g, '')
+                                       .replace(/fiacces-(dyslexia|underline-links|pause-animations)/g, '')
                                        .replace(/\s+/g, ' ').trim();
 
-        html.style.setProperty('--wpa11y-text-scale', state.textScale);
+        html.style.setProperty('--fiacces-text-scale', state.textScale);
 
-        if (state.contrast)  html.classList.add('wpa11y-contrast-' + state.contrast);
-        if (state.cursor)    html.classList.add('wpa11y-cursor-' + state.cursor);
-        if (state.dyslexia)  html.classList.add('wpa11y-dyslexia');
-        if (state.underline) html.classList.add('wpa11y-underline-links');
-        if (state.pauseAnim) html.classList.add('wpa11y-pause-animations');
+        if (state.contrast)  html.classList.add('fiacces-contrast-' + state.contrast);
+        if (state.cursor)    html.classList.add('fiacces-cursor-' + state.cursor);
+        if (state.dyslexia)  html.classList.add('fiacces-dyslexia');
+        if (state.underline) html.classList.add('fiacces-underline-links');
+        if (state.pauseAnim) html.classList.add('fiacces-pause-animations');
 
         applyAnimationPause();
         syncUI();
@@ -205,21 +205,21 @@
 
     // -------- Init --------
     function init() {
-        root       = document.getElementById('wpa11y-root');
+        root       = document.getElementById('fiacces-root');
         if (!root) return;
 
-        fab        = document.getElementById('wpa11y-toggle');
-        panel      = document.getElementById('wpa11y-panel');
-        closeBtn   = document.getElementById('wpa11y-close');
-        resetBtn   = document.getElementById('wpa11y-reset');
-        announceEl = document.getElementById('wpa11y-announce');
+        fab        = document.getElementById('fiacces-toggle');
+        panel      = document.getElementById('fiacces-panel');
+        closeBtn   = document.getElementById('fiacces-close');
+        resetBtn   = document.getElementById('fiacces-reset');
+        announceEl = document.getElementById('fiacces-announce');
 
         loadState();
         applyState();
 
         // Aplicar color primario desde admin
         if (settings.primaryColor) {
-            root.style.setProperty('--wpa11y-primary', settings.primaryColor);
+            root.style.setProperty('--fiacces-primary', settings.primaryColor);
         }
 
         // Toggle del FAB
