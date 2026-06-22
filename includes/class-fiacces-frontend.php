@@ -77,7 +77,8 @@ class FIAcces_Frontend {
                 var p = JSON.parse(raw);
                 var b = document.documentElement;
                 if (p.textScale) b.style.setProperty('--fiacces-text-scale', p.textScale);
-                if (p.contrast)  b.classList.add('fiacces-contrast-' + p.contrast);
+                if (p.contrast)   b.classList.add('fiacces-contrast-' + p.contrast);
+                if (p.colorblind) b.classList.add('fiacces-daltonism-' + p.colorblind);
                 if (p.dyslexia)  b.classList.add('fiacces-dyslexia');
                 if (p.underline) b.classList.add('fiacces-underline-links');
                 if (p.pauseAnim) b.classList.add('fiacces-pause-animations');
@@ -211,6 +212,28 @@ class FIAcces_Frontend {
                     </section>
                     <?php endif; ?>
 
+                    <?php if ( ! empty( $features['colorblind'] ) ) : ?>
+                    <section class="fiacces-card" aria-labelledby="fiacces-card-colorblind">
+                        <h3 id="fiacces-card-colorblind" class="fiacces-card__title">
+                            <?php esc_html_e( 'Daltonismo', 'fiacces' ); ?>
+                        </h3>
+                        <div class="fiacces-card__grid">
+                            <button type="button" class="fiacces-toggle" data-action="colorblind" data-value="" aria-pressed="true">
+                                <?php esc_html_e( 'Normal', 'fiacces' ); ?>
+                            </button>
+                            <button type="button" class="fiacces-toggle" data-action="colorblind" data-value="protanopia" aria-pressed="false">
+                                <?php esc_html_e( 'Protanopia (rojo)', 'fiacces' ); ?>
+                            </button>
+                            <button type="button" class="fiacces-toggle" data-action="colorblind" data-value="deuteranopia" aria-pressed="false">
+                                <?php esc_html_e( 'Deuteranopia (verde)', 'fiacces' ); ?>
+                            </button>
+                            <button type="button" class="fiacces-toggle" data-action="colorblind" data-value="tritanopia" aria-pressed="false">
+                                <?php esc_html_e( 'Tritanopia (azul)', 'fiacces' ); ?>
+                            </button>
+                        </div>
+                    </section>
+                    <?php endif; ?>
+
                     <?php if ( $features['readability'] ) : ?>
                     <section class="fiacces-card" aria-labelledby="fiacces-card-read">
                         <h3 id="fiacces-card-read" class="fiacces-card__title">
@@ -281,6 +304,21 @@ class FIAcces_Frontend {
 
                 <div id="fiacces-announce" class="fiacces-sr-only" role="status" aria-live="polite"></div>
             </div>
+
+            <?php // Filtros SVG de daltonizacion (corrigen, redistribuyendo el color a los canales visibles). ?>
+            <svg class="fiacces-svg-filters" aria-hidden="true" focusable="false" width="0" height="0" style="position:absolute;width:0;height:0;overflow:hidden;">
+                <defs>
+                    <filter id="fiacces-filter-protanopia">
+                        <feColorMatrix type="matrix" values="1 0 0 0 0  -0.2549 1.2549 0 0 0  0.3031 -0.5451 1.242 0 0  0 0 0 1 0"/>
+                    </filter>
+                    <filter id="fiacces-filter-deuteranopia">
+                        <feColorMatrix type="matrix" values="1 0 0 0 0  -0.4375 1.4375 0 0 0  0.2625 -0.5625 1.3 0 0  0 0 0 1 0"/>
+                    </filter>
+                    <filter id="fiacces-filter-tritanopia">
+                        <feColorMatrix type="matrix" values="1.05 -0.3825 0.3325 0 0  0 1.2345 -0.2345 0 0  0 0 1 0 0  0 0 0 1 0"/>
+                    </filter>
+                </defs>
+            </svg>
         </div>
         <?php
     }

@@ -49,6 +49,11 @@ html.fiacces-contrast-inverted picture { filter: invert(1) hue-rotate(180deg); }
 
 html.fiacces-contrast-gray { filter: grayscale(100%); }
 
+/* === Filtros para daltonismo === */
+html.fiacces-daltonism-protanopia   { filter: url("#fiacces-filter-protanopia"); }
+html.fiacces-daltonism-deuteranopia { filter: url("#fiacces-filter-deuteranopia"); }
+html.fiacces-daltonism-tritanopia   { filter: url("#fiacces-filter-tritanopia"); }
+
 /* El propio panel del plugin no debe invertirse ni desaturarse */
 html.fiacces-contrast-inverted #fiacces-root,
 html.fiacces-contrast-gray #fiacces-root { filter: invert(1) hue-rotate(180deg); }

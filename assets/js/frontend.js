@@ -13,6 +13,7 @@
     var state = {
         textScale: 1,
         contrast: '',   // '', 'high', 'inverted', 'gray'
+        colorblind: '', // '', 'protanopia', 'deuteranopia', 'tritanopia'
         dyslexia: false,
         underline: false,
         pauseAnim: false,
@@ -56,15 +57,16 @@
         var html = document.documentElement;
 
         // Limpiar clases previas
-        html.className = html.className.replace(/fiacces-(contrast|cursor)-\S+/g, '')
+        html.className = html.className.replace(/fiacces-(contrast|cursor|daltonism)-\S+/g, '')
                                        .replace(/fiacces-(dyslexia|underline-links|pause-animations)/g, '')
                                        .replace(/\s+/g, ' ').trim();
 
         html.style.setProperty('--fiacces-text-scale', state.textScale);
         applyTextScale(state.textScale);
 
-        if (state.contrast)  html.classList.add('fiacces-contrast-' + state.contrast);
-        if (state.cursor)    html.classList.add('fiacces-cursor-' + state.cursor);
+        if (state.contrast)   html.classList.add('fiacces-contrast-' + state.contrast);
+        if (state.colorblind) html.classList.add('fiacces-daltonism-' + state.colorblind);
+        if (state.cursor)     html.classList.add('fiacces-cursor-' + state.cursor);
         if (state.dyslexia)  html.classList.add('fiacces-dyslexia');
         if (state.underline) html.classList.add('fiacces-underline-links');
         if (state.pauseAnim) html.classList.add('fiacces-pause-animations');
@@ -132,6 +134,11 @@
             btn.setAttribute('aria-pressed', btn.dataset.value === state.contrast ? 'true' : 'false');
         });
 
+        // Toggles de daltonismo
+        panel.querySelectorAll('[data-action="colorblind"]').forEach(function (btn) {
+            btn.setAttribute('aria-pressed', btn.dataset.value === state.colorblind ? 'true' : 'false');
+        });
+
         // Toggles de cursor
         panel.querySelectorAll('[data-action="cursor"]').forEach(function (btn) {
             btn.setAttribute('aria-pressed', btn.dataset.value === state.cursor ? 'true' : 'false');
@@ -168,6 +175,9 @@
             case 'contrast':
                 state.contrast = (state.contrast === value) ? '' : value;
                 break;
+            case 'colorblind':
+                state.colorblind = (state.colorblind === value) ? '' : value;
+                break;
             case 'cursor':
                 state.cursor = (state.cursor === value) ? '' : value;
                 break;
@@ -181,7 +191,7 @@
                 state.pauseAnim = !state.pauseAnim;
                 break;
             case 'reset':
-                state = { textScale: 1, contrast: '', dyslexia: false, underline: false, pauseAnim: false, cursor: '' };
+                state = { textScale: 1, contrast: '', colorblind: '', dyslexia: false, underline: false, pauseAnim: false, cursor: '' };
                 break;
         }
         applyState();

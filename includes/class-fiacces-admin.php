@@ -161,6 +161,7 @@ class FIAcces_Admin {
                             $feature_labels = array(
                                 'text_size'    => __( 'Ajuste de tamaño de texto', 'fiacces' ),
                                 'contrast'     => __( 'Modos de contraste', 'fiacces' ),
+                                'colorblind'   => __( 'Filtros para daltonismo', 'fiacces' ),
                                 'readability'  => __( 'Legibilidad (dislexia, subrayado)', 'fiacces' ),
                                 'animations'   => __( 'Pausar animaciones', 'fiacces' ),
                                 'cursor'       => __( 'Cursor grande', 'fiacces' ),
