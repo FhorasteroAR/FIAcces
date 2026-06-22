@@ -163,8 +163,11 @@ html.fiacces-cursor-xl body * { cursor: url("data:image/svg+xml;utf8,<svg xmlns=
     padding: 12px 32px 12px 14px;
     font-size: 14px;
     line-height: 1.45;
-    animation: fiacces-tip-in 0.25s ease;
+    transform: scale(0);
+    opacity: 0;
+    transition: transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.2s ease;
 }
+.fiacces-tip.fiacces-tip--open { transform: scale(1); opacity: 1; }
 .fiacces-tip[hidden] { display: none; }
 .fiacces-tip__text { margin: 0; }
 .fiacces-tip__close {
@@ -213,9 +216,14 @@ html.fiacces-cursor-xl body * { cursor: url("data:image/svg+xml;utf8,<svg xmlns=
 #fiacces-root.fiacces-pos-top-right    .fiacces-tip::after { top: -7px; right: 20px; border-bottom: 0; border-right: 0; }
 #fiacces-root.fiacces-pos-top-left     .fiacces-tip::after { top: -7px; left: 20px;  border-bottom: 0; border-right: 0; }
 
-@keyframes fiacces-tip-in {
-    from { opacity: 0; transform: translateY(6px); }
-    to   { opacity: 1; transform: translateY(0); }
+/* El bocadillo crece desde la esquina del icono */
+#fiacces-root.fiacces-pos-bottom-right .fiacces-tip { transform-origin: bottom right; }
+#fiacces-root.fiacces-pos-bottom-left  .fiacces-tip { transform-origin: bottom left; }
+#fiacces-root.fiacces-pos-top-right    .fiacces-tip { transform-origin: top right; }
+#fiacces-root.fiacces-pos-top-left     .fiacces-tip { transform-origin: top left; }
+
+@media (prefers-reduced-motion: reduce) {
+    .fiacces-tip { transition: opacity 0.2s ease; transform: scale(1); }
 }
 .fiacces-fab:focus-visible {
     outline: 3px solid #FBBF24;
