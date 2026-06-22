@@ -202,15 +202,28 @@
 
     // -------- Aviso emergente --------
     function dismissTip(persist) {
-        if (!tip) return;
-        tip.hidden = true;
-        if (persist) {
-            try { localStorage.setItem(TIP_KEY, '1'); }
-            catch (e) {
-                var expires = new Date();
-                expires.setFullYear(expires.getFullYear() + 1);
-                document.cookie = TIP_KEY + '=1; expires=' + expires.toUTCString() + '; path=/; SameSite=Lax';
-            }
+        if (!tip || tip.hidden) {
+            if (persist) persistTipDismissed();
+            return;
+        }
+        // Animación inversa: quitar la clase y ocultar al terminar la transición
+        tip.classList.remove('fiacces-tip--open');
+        var done = function () {
+            tip.hidden = true;
+            tip.removeEventListener('transitionend', done);
+        };
+        tip.addEventListener('transitionend', done);
+        // Fallback por si no se dispara transitionend
+        setTimeout(done, 400);
+        if (persist) persistTipDismissed();
+    }
+
+    function persistTipDismissed() {
+        try { localStorage.setItem(TIP_KEY, '1'); }
+        catch (e) {
+            var expires = new Date();
+            expires.setFullYear(expires.getFullYear() + 1);
+            document.cookie = TIP_KEY + '=1; expires=' + expires.toUTCString() + '; path=/; SameSite=Lax';
         }
     }
 
@@ -219,7 +232,12 @@
         var dismissed = false;
         try { dismissed = localStorage.getItem(TIP_KEY) === '1'; }
         catch (e) { dismissed = /(?:^|;\s*)fiacces_tip_dismissed=1/.test(document.cookie); }
-        if (!dismissed) tip.hidden = false;
+        if (dismissed) return;
+
+        tip.hidden = false;
+        // Forzar reflow para que la transición se ejecute desde scale(0)
+        void tip.offsetWidth;
+        tip.classList.add('fiacces-tip--open');
     }
 
     // -------- Modal: abrir / cerrar --------
