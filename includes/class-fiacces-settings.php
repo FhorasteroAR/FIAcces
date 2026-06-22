@@ -24,6 +24,8 @@ class FIAcces_Settings {
             'primary_color'   => '#2563EB',
             // Atajo de teclado (combinación con Alt)
             'shortcut_key'    => 'A',
+            // Texto del aviso emergente sobre el icono
+            'tip_text'        => 'La web de la FIA cumple con estándares de accesibilidad WCAG 2.1 AA.',
             // Funcionalidades habilitadas
             'features'        => array(
                 'text_size'    => true,
@@ -70,6 +72,10 @@ class FIAcces_Settings {
         foreach ( $defaults['features'] as $key => $default ) {
             $clean['features'][ $key ] = ! empty( $input['features'][ $key ] );
         }
+
+        // Texto del aviso emergente (texto plano, sin HTML)
+        $tip                = sanitize_text_field( $input['tip_text'] ?? '' );
+        $clean['tip_text']  = '' !== $tip ? $tip : $defaults['tip_text'];
 
         // Mostrar en móvil
         $clean['show_on_mobile'] = ! empty( $input['show_on_mobile'] );

@@ -138,6 +138,19 @@ class FIAcces_Admin {
                                 </td>
                             </tr>
                             <tr>
+                                <th scope="row">
+                                    <label for="fiacces_tip_text"><?php esc_html_e( 'Texto del aviso', 'fiacces' ); ?></label>
+                                </th>
+                                <td>
+                                    <textarea name="<?php echo esc_attr( FIACCES_OPTION_KEY ); ?>[tip_text]"
+                                              id="fiacces_tip_text"
+                                              rows="2"
+                                              class="large-text"
+                                              maxlength="200"><?php echo esc_textarea( $opts['tip_text'] ); ?></textarea>
+                                    <p class="description"><?php esc_html_e( 'Mensaje breve que aparece sobre el icono de accesibilidad. Déjalo vacío para usar el texto por defecto.', 'fiacces' ); ?></p>
+                                </td>
+                            </tr>
+                            <tr>
                                 <th scope="row"><?php esc_html_e( 'Dispositivos móviles', 'fiacces' ); ?></th>
                                 <td>
                                     <label>

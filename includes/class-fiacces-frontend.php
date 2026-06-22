@@ -156,7 +156,7 @@ class FIAcces_Frontend {
 
             <div id="fiacces-tip" class="fiacces-tip" role="status" hidden>
                 <p class="fiacces-tip__text">
-                    <?php esc_html_e( 'La web de la FIA cumple con estándares de accesibilidad WCAG 2.1 AA.', 'fiacces' ); ?>
+                    <?php echo esc_html( $opts['tip_text'] ); ?>
                 </p>
                 <button type="button" id="fiacces-tip-close" class="fiacces-tip__close" aria-label="<?php esc_attr_e( 'Cerrar aviso', 'fiacces' ); ?>">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
