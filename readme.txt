@@ -1,5 +1,5 @@
 === FIAcces ===
-Contributors: tu-usuario
+Contributors: Sistemas FIA
 Tags: accessibility, wcag, a11y, accesibilidad, contrast
 Requires at least: 5.0
 Tested up to: 6.5
