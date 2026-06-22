@@ -6,6 +6,7 @@
     'use strict';
 
     var STORAGE_KEY = 'fiacces_prefs';
+    var TIP_KEY     = 'fiacces_tip_dismissed';
     var settings    = (window.FIAcces && window.FIAcces.settings) || {};
     var i18n        = (window.FIAcces && window.FIAcces.i18n) || {};
 
@@ -20,7 +21,7 @@
         cursor: ''      // '', 'large', 'xl'
     };
 
-    var root, fab, panel, closeBtn, resetBtn, announceEl;
+    var root, fab, panel, closeBtn, resetBtn, announceEl, tip, tipClose;
     var lastFocus = null;
     var pausedVideos = [];
 
@@ -199,9 +200,32 @@
         announce(i18n.applied || 'Aplicado');
     }
 
+    // -------- Aviso emergente --------
+    function dismissTip(persist) {
+        if (!tip) return;
+        tip.hidden = true;
+        if (persist) {
+            try { localStorage.setItem(TIP_KEY, '1'); }
+            catch (e) {
+                var expires = new Date();
+                expires.setFullYear(expires.getFullYear() + 1);
+                document.cookie = TIP_KEY + '=1; expires=' + expires.toUTCString() + '; path=/; SameSite=Lax';
+            }
+        }
+    }
+
+    function maybeShowTip() {
+        if (!tip) return;
+        var dismissed = false;
+        try { dismissed = localStorage.getItem(TIP_KEY) === '1'; }
+        catch (e) { dismissed = /(?:^|;\s*)fiacces_tip_dismissed=1/.test(document.cookie); }
+        if (!dismissed) tip.hidden = false;
+    }
+
     // -------- Modal: abrir / cerrar --------
     function openPanel() {
         if (!panel) return;
+        dismissTip(true);
         lastFocus = document.activeElement;
         panel.hidden = false;
         fab.setAttribute('aria-expanded', 'true');
@@ -253,9 +277,14 @@
         closeBtn   = document.getElementById('fiacces-close');
         resetBtn   = document.getElementById('fiacces-reset');
         announceEl = document.getElementById('fiacces-announce');
+        tip        = document.getElementById('fiacces-tip');
+        tipClose   = document.getElementById('fiacces-tip-close');
 
         loadState();
         applyState();
+        maybeShowTip();
+
+        if (tipClose) tipClose.addEventListener('click', function () { dismissTip(true); });
 
         // Aplicar color primario desde admin
         if (settings.primaryColor) {

@@ -154,6 +154,17 @@ class FIAcces_Frontend {
                 <span class="fiacces-sr-only"><?php esc_html_e( 'Accesibilidad', 'fiacces' ); ?></span>
             </button>
 
+            <div id="fiacces-tip" class="fiacces-tip" role="status" hidden>
+                <p class="fiacces-tip__text">
+                    <?php echo esc_html( $opts['tip_text'] ); ?>
+                </p>
+                <button type="button" id="fiacces-tip-close" class="fiacces-tip__close" aria-label="<?php esc_attr_e( 'Cerrar aviso', 'fiacces' ); ?>">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                        <path d="M18 6L6 18M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+
             <div id="fiacces-panel"
                  class="fiacces-panel"
                  role="dialog"
