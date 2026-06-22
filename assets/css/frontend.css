@@ -149,6 +149,74 @@ html.fiacces-cursor-xl body * { cursor: url("data:image/svg+xml;utf8,<svg xmlns=
     padding: 0;
 }
 .fiacces-fab:hover { transform: scale(1.08); background: var(--fiacces-primary-dark); }
+
+/* === Aviso emergente sobre el icono === */
+.fiacces-tip {
+    position: absolute;
+    width: 240px;
+    max-width: calc(100vw - 40px);
+    background: var(--fiacces-bg);
+    color: var(--fiacces-text);
+    border: 1px solid var(--fiacces-border);
+    border-radius: var(--fiacces-radius-sm);
+    box-shadow: var(--fiacces-shadow);
+    padding: 12px 32px 12px 14px;
+    font-size: 14px;
+    line-height: 1.45;
+    animation: fiacces-tip-in 0.25s ease;
+}
+.fiacces-tip[hidden] { display: none; }
+.fiacces-tip__text { margin: 0; }
+.fiacces-tip__close {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    width: 22px;
+    height: 22px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    color: var(--fiacces-text-light);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.fiacces-tip__close:hover { background: var(--fiacces-bg-alt); color: var(--fiacces-text); }
+.fiacces-tip__close:focus-visible { outline: 2px solid var(--fiacces-primary); outline-offset: 1px; }
+
+/* Flecha del bocadillo */
+.fiacces-tip::after {
+    content: "";
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    background: var(--fiacces-bg);
+    border: 1px solid var(--fiacces-border);
+    transform: rotate(45deg);
+}
+
+/* Posición del bocadillo según la esquina del botón */
+#fiacces-root.fiacces-pos-bottom-right .fiacces-tip,
+#fiacces-root.fiacces-pos-bottom-left  .fiacces-tip { bottom: 72px; }
+#fiacces-root.fiacces-pos-top-right    .fiacces-tip,
+#fiacces-root.fiacces-pos-top-left     .fiacces-tip { top: 72px; }
+
+#fiacces-root.fiacces-pos-bottom-right .fiacces-tip,
+#fiacces-root.fiacces-pos-top-right    .fiacces-tip { right: 0; }
+#fiacces-root.fiacces-pos-bottom-left  .fiacces-tip,
+#fiacces-root.fiacces-pos-top-left     .fiacces-tip { left: 0; }
+
+#fiacces-root.fiacces-pos-bottom-right .fiacces-tip::after { bottom: -7px; right: 20px; border-top: 0; border-left: 0; }
+#fiacces-root.fiacces-pos-bottom-left  .fiacces-tip::after { bottom: -7px; left: 20px;  border-top: 0; border-left: 0; }
+#fiacces-root.fiacces-pos-top-right    .fiacces-tip::after { top: -7px; right: 20px; border-bottom: 0; border-right: 0; }
+#fiacces-root.fiacces-pos-top-left     .fiacces-tip::after { top: -7px; left: 20px;  border-bottom: 0; border-right: 0; }
+
+@keyframes fiacces-tip-in {
+    from { opacity: 0; transform: translateY(6px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
 .fiacces-fab:focus-visible {
     outline: 3px solid #FBBF24;
     outline-offset: 3px;
