@@ -123,10 +123,10 @@ html.fiacces-cursor-xl body * { cursor: url("data:image/svg+xml;utf8,<svg xmlns=
     line-height: 1.5;
     color: var(--fiacces-text);
 }
-#fiacces-root.fiacces-pos-bottom-right { bottom: 20px; right: 20px; left: auto; top: auto; }
-#fiacces-root.fiacces-pos-bottom-left  { bottom: 20px; left: 20px; right: auto; top: auto; }
-#fiacces-root.fiacces-pos-top-right    { top: 20px; right: 20px; left: auto; bottom: auto; }
-#fiacces-root.fiacces-pos-top-left     { top: 20px; left: 20px; right: auto; bottom: auto; }
+#fiacces-root.fiacces-pos-bottom-right { bottom: 20px; right: 20px; }
+#fiacces-root.fiacces-pos-bottom-left  { bottom: 20px; left: 20px; }
+#fiacces-root.fiacces-pos-top-right    { top: 20px; right: 20px; }
+#fiacces-root.fiacces-pos-top-left     { top: 20px; left: 20px; }
 
 .fiacces-fab {
     width: 56px;
