@@ -28,6 +28,7 @@ class FIAcces_Settings {
             'features'        => array(
                 'text_size'    => true,
                 'contrast'     => true,
+                'colorblind'   => true,
                 'readability'  => true,
                 'animations'   => true,
                 'cursor'       => true,
