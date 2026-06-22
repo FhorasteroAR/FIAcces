@@ -61,6 +61,7 @@
                                        .replace(/\s+/g, ' ').trim();
 
         html.style.setProperty('--fiacces-text-scale', state.textScale);
+        applyTextScale(state.textScale);
 
         if (state.contrast)  html.classList.add('fiacces-contrast-' + state.contrast);
         if (state.cursor)    html.classList.add('fiacces-cursor-' + state.cursor);
@@ -70,6 +71,35 @@
 
         applyAnimationPause();
         syncUI();
+    }
+
+    // -------- Escala de texto por elemento --------
+    // Escalar el font-size del <html> solo afecta a textos en rem/em. Muchos temas
+    // fijan el tamaño en px, por lo que recorremos los elementos y multiplicamos su
+    // font-size computado real, guardando el valor base en un data-attribute.
+    function applyTextScale(scale) {
+        if (!document.body) return;
+        var nodes = document.body.querySelectorAll('*');
+        for (var i = 0; i < nodes.length; i++) {
+            var el = nodes[i];
+            // No tocar la propia UI del widget
+            if (el.closest && el.closest('#fiacces-root')) continue;
+
+            var base = el.getAttribute('data-fiacces-base-font');
+            if (base === null) {
+                base = parseFloat(window.getComputedStyle(el).fontSize);
+                if (!base || isNaN(base)) continue;
+                el.setAttribute('data-fiacces-base-font', base);
+            } else {
+                base = parseFloat(base);
+            }
+
+            if (scale === 1) {
+                el.style.fontSize = '';
+            } else {
+                el.style.fontSize = (base * scale) + 'px';
+            }
+        }
     }
 
     function applyAnimationPause() {
@@ -269,10 +299,18 @@
             }
         });
 
-        // Re-aplicar pausa de videos si entran nuevos al DOM
+        // Re-aplicar ajustes si entra contenido nuevo al DOM (AJAX, sliders, etc.)
         if (window.MutationObserver) {
+            var reapplyTimer = null;
             var observer = new MutationObserver(function () {
                 if (state.pauseAnim) applyAnimationPause();
+                // Debounce: re-escalar el texto solo si hay una escala activa
+                if (state.textScale !== 1) {
+                    clearTimeout(reapplyTimer);
+                    reapplyTimer = setTimeout(function () {
+                        applyTextScale(state.textScale);
+                    }, 150);
+                }
             });
             observer.observe(document.body, { childList: true, subtree: true });
         }

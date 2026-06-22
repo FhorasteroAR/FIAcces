@@ -4,7 +4,7 @@
  * Plugin URI:        https://example.com/fiacces
  * Description:       Plugin de accesibilidad WCAG 2.1 nivel AA. Añade una barra de herramientas flotante en el frontend que permite a los usuarios ajustar texto, contraste, animaciones, cursor y más.
  * Version:           1.0.0
- * Requires at least: 7.0
+ * Requires at least: 5.0
  * Requires PHP:      7.4
  * Author:            Tu Nombre
  * Author URI:        https://example.com

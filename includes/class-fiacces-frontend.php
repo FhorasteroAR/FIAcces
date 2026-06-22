@@ -68,8 +68,8 @@ class FIAcces_Frontend {
         if ( is_admin() ) {
             return;
         }
-        ?>
-        <script>
+
+        $js = <<<'JS'
         (function(){
             try {
                 var raw = localStorage.getItem('fiacces_prefs');
@@ -84,8 +84,15 @@ class FIAcces_Frontend {
                 if (p.cursor)    b.classList.add('fiacces-cursor-' + p.cursor);
             } catch(e) {}
         })();
-        </script>
-        <?php
+        JS;
+
+        // wp_print_inline_script_tag aplica el filtro 'wp_inline_script_attributes',
+        // que permite a plugins de seguridad inyectar un nonce de CSP (WP 5.7+).
+        if ( function_exists( 'wp_print_inline_script_tag' ) ) {
+            wp_print_inline_script_tag( $js );
+        } else {
+            echo '<script>' . $js . '</script>'; // phpcs:ignore WordPress.Security.EscapeOutput
+        }
     }
 
     /** Strings traducibles para la UI. */
