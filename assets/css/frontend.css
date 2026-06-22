@@ -17,8 +17,11 @@
     --fiacces-radius-sm: 8px;
 }
 
-/* === Aplicar escala de texto global === */
-html { font-size: calc(100% * var(--fiacces-text-scale)) !important; }
+/* === Aplicar escala de texto global ===
+   La escala se aplica por elemento desde JS (applyTextScale en frontend.js)
+   leyendo el font-size computado real, de modo que también afecta a textos
+   definidos en px por el tema. No se escala el <html> aquí para evitar un
+   doble escalado de los textos en rem/em. */
 
 /* === Modos de contraste === */
 html.fiacces-contrast-high,
