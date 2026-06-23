@@ -1,4 +1,4 @@
-# Miniproyecto de implementación WCAG 2.1 AA — Web de la FIA
+# Proyecto de implementación WCAG 2.1 AA — Web de la FIA
 
 > Sitio objetivo: https://fialp.gob.ar/
 > Nivel de conformidad objetivo: **WCAG 2.1 AA**
@@ -6,7 +6,7 @@
 
 ## 0. Alcance y aclaración
 
-Este miniproyecto define **cómo llevar la web de la FIA a conformidad WCAG 2.1 nivel AA**,
+Este proyecto define **cómo llevar la web de la FIA a conformidad WCAG 2.1 nivel AA**,
 respetando el enfoque que seguimos al construir el plugin **FIAcces**: mejoras
 incrementales, sin romper el tema, verificables y con preferencia por soluciones
 estándar de WordPress.
@@ -119,8 +119,6 @@ Marca cada criterio: `[ ]` pendiente · `[~]` parcial · `[x]` cumplido.
 
 ## 4. Tareas concretas sobre el sitio (alto impacto / bajo esfuerzo)
 
-Estas suelen ser las que más mueven la aguja en un WordPress institucional:
-
 1. **`<html lang="es">`** en la cabecera del tema (3.1.1).
 2. **Enlace "Saltar al contenido"** al inicio del `<body>`, visible al foco (2.4.1).
 3. **Foco visible** global: no eliminar `outline`; estilizarlo con contraste ≥ 3:1 (2.4.7).
@@ -150,10 +148,6 @@ Estas suelen ser las que más mueven la aguja en un WordPress institucional:
 - Subtítulos/transcripciones de multimedia.
 - Orden y visibilidad del foco en componentes del tema.
 - Validez del HTML y semántica/ARIA de los widgets del tema.
-
-> Conclusión honesta: instalar FIAcces **no hace** que el sitio "cumpla WCAG". Es una
-> capa de asistencia. La conformidad se certifica corrigiendo el sitio según las
-> secciones 3 y 4.
 
 ---
 
