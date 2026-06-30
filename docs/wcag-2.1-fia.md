@@ -7,13 +7,13 @@
 ## 0. Alcance y aclaración
 
 Este miniproyecto define **cómo llevar la web de la FIA a conformidad WCAG 2.1 nivel AA**,
-respetando el enfoque que seguimos al construir el plugin **FIAcces**: mejoras
+respetando el enfoque que seguimos al construir el plugin **FIAccess**: mejoras
 incrementales, sin romper el tema, verificables y con preferencia por soluciones
 estándar de WordPress.
 
 Distinción clave que mantuvimos durante todo el desarrollo:
 
-- **FIAcces** = *herramienta de asistencia al usuario* (ajustes de texto, contraste,
+- **FIAccess** = *herramienta de asistencia al usuario* (ajustes de texto, contraste,
   daltonismo, cursor, pausa de animaciones…). **Ayuda**, pero **no sustituye** la
   conformidad.
 - **Conformidad WCAG** = se logra en el **diseño y el marcado del propio sitio**
@@ -82,7 +82,7 @@ Marca cada criterio: `[ ]` pendiente · `[~]` parcial · `[x]` cumplido.
 
 - [ ] **2.1.1 Teclado (A):** toda la funcionalidad usable con teclado.
 - [ ] **2.1.2 Sin trampas de teclado (A):** se puede entrar y salir de cada componente.
-- [ ] **2.1.4 Atajos de un carácter (A):** configurables/desactivables (FIAcces ya usa
+- [ ] **2.1.4 Atajos de un carácter (A):** configurables/desactivables (FIAccess ya usa
       `Alt + letra`, no un solo carácter).
 - [ ] **2.4.1 Evitar bloques (A):** enlace **"Saltar al contenido"** al inicio.
 - [ ] **2.4.2 Título de página (A):** `<title>` único y descriptivo por página.
@@ -113,7 +113,7 @@ Marca cada criterio: `[ ]` pendiente · `[~]` parcial · `[x]` cumplido.
 - [ ] **4.1.2 Nombre, función, valor (A):** componentes interactivos con roles/estados
       ARIA correctos (menús, acordeones, modales, sliders).
 - [ ] **4.1.3 Mensajes de estado (AA):** notificaciones vía `role="status"` /
-      `aria-live` (FIAcces ya aplica este patrón en sus anuncios).
+      `aria-live` (FIAccess ya aplica este patrón en sus anuncios).
 
 ---
 
@@ -134,7 +134,7 @@ Estas suelen ser las que más mueven la aguja en un WordPress institucional:
 
 ---
 
-## 5. Qué aporta FIAcces (y qué NO cubre)
+## 5. Qué aporta FIAccess (y qué NO cubre)
 
 **Aporta (mejora de usabilidad real):**
 - Escalado de texto por elemento (incluye fuentes en px).
@@ -151,7 +151,7 @@ Estas suelen ser las que más mueven la aguja en un WordPress institucional:
 - Orden y visibilidad del foco en componentes del tema.
 - Validez del HTML y semántica/ARIA de los widgets del tema.
 
-> Conclusión honesta: instalar FIAcces **no hace** que el sitio "cumpla WCAG". Es una
+> Conclusión honesta: instalar s **no hace** que el sitio "cumpla WCAG". Es una
 > capa de asistencia. La conformidad se certifica corrigiendo el sitio según las
 > secciones 3 y 4.
 
@@ -165,8 +165,8 @@ Estas suelen ser las que más mueven la aguja en un WordPress institucional:
 3. Zoom 200%/400% y ancho 320px.
 4. Redactar la **Declaración de Accesibilidad** (estado de conformidad, fecha,
    método de evaluación, vía de contacto para reportar barreras).
-5. Ajustar el texto del aviso de FIAcces para que sea **veraz** respecto al estado
-   real (campo "Texto del aviso" en Ajustes → FIAcces).
+5. Ajustar el texto del aviso de  para que sea **veraz** respecto al estado
+   real (campo "Texto del aviso" en Ajustes → ).
 
 ---
 
