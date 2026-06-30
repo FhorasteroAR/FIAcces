@@ -1,4 +1,4 @@
-# Miniproyecto de implementación WCAG 2.1 AA — Web de la FIA
+# Implementación WCAG 2.1 AA — Web de la FIA
 
 > Sitio objetivo: https://fialp.gob.ar/
 > Nivel de conformidad objetivo: **WCAG 2.1 AA**
