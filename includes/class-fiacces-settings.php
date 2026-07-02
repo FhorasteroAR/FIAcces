@@ -38,6 +38,15 @@ class FIAcces_Settings {
             ),
             // Mostrar plugin en dispositivos móviles
             'show_on_mobile'  => true,
+            // Ayudas de conformidad WCAG aplicadas automáticamente al sitio
+            'remediation'     => array(
+                'skip_link'      => true,
+                'focus_visible'  => true,
+                'lang_attr'      => true,
+                'img_alt'        => true,
+                'external_links' => true,
+                'nav_labels'     => true,
+            ),
         );
     }
 
@@ -79,6 +88,12 @@ class FIAcces_Settings {
 
         // Mostrar en móvil
         $clean['show_on_mobile'] = ! empty( $input['show_on_mobile'] );
+
+        // Ayudas de conformidad WCAG
+        $clean['remediation'] = array();
+        foreach ( $defaults['remediation'] as $key => $default ) {
+            $clean['remediation'][ $key ] = ! empty( $input['remediation'][ $key ] );
+        }
 
         return $clean;
     }
