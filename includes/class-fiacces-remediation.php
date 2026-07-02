@@ -80,13 +80,34 @@ class FIAcces_Remediation {
         );
     }
 
-    /** Añade alt="" a las imágenes de la biblioteca que no tengan alt (evita leer el nombre del archivo). */
+    /**
+     * Ajusta el alt de las imágenes de la biblioteca:
+     * 1) aplica el alt corregido por el administrador si existe (prioridad);
+     * 2) si no, y la ayuda está activa, marca como decorativa (alt="").
+     */
     public static function ensure_attachment_alt( $attr ) {
         $flags = self::flags();
+
+        // Arreglo explícito guardado desde el analizador (por ruta de la imagen).
+        if ( isset( $attr['src'] ) ) {
+            $overrides = self::alt_overrides();
+            $path      = FIAcces_Scanner::normalize_path( $attr['src'] );
+            if ( '' !== $path && isset( $overrides[ $path ] ) ) {
+                $attr['alt'] = $overrides[ $path ];
+                return $attr;
+            }
+        }
+
         if ( ! empty( $flags['img_alt'] ) && ! isset( $attr['alt'] ) ) {
             $attr['alt'] = '';
         }
         return $attr;
+    }
+
+    /** Mapa de correcciones de alt guardadas (ruta => alt). */
+    private static function alt_overrides() {
+        $fixes = FIAcces_Scanner::get_fixes();
+        return isset( $fixes['img_alt'] ) && is_array( $fixes['img_alt'] ) ? $fixes['img_alt'] : array();
     }
 
     /** Encola el JS que aplica las correcciones del lado del cliente. */
@@ -95,10 +116,12 @@ class FIAcces_Remediation {
             return;
         }
 
-        $flags = self::flags();
-        // Si no hay ninguna ayuda de cliente activa, no cargar nada.
+        $flags     = self::flags();
+        $overrides = self::alt_overrides();
+
+        // Si no hay ninguna ayuda de cliente activa ni correcciones guardadas, no cargar nada.
         $client_flags = array( 'lang_attr', 'img_alt', 'external_links', 'nav_labels', 'skip_link' );
-        $any          = false;
+        $any          = ! empty( $overrides );
         foreach ( $client_flags as $f ) {
             if ( ! empty( $flags[ $f ] ) ) {
                 $any = true;
@@ -128,8 +151,9 @@ class FIAcces_Remediation {
                     'externalLinks' => ! empty( $flags['external_links'] ),
                     'navLabels'     => ! empty( $flags['nav_labels'] ),
                 ),
-                'lang'  => get_bloginfo( 'language' ),
-                'i18n'  => array(
+                'lang'      => get_bloginfo( 'language' ),
+                'imgAltMap' => (object) $overrides,
+                'i18n'      => array(
                     'newTab' => __( '(abre en una nueva pestaña)', 'fiacces' ),
                     'nav'    => __( 'Navegación', 'fiacces' ),
                 ),

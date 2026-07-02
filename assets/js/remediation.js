@@ -39,6 +39,23 @@
         }
     }
 
+    // 1.1.1 — Aplicar alt corregidos por el administrador (por ruta de la imagen)
+    function applyAltOverrides() {
+        var map = cfg.imgAltMap;
+        if (!map) return;
+        var imgs = document.querySelectorAll('img');
+        for (var i = 0; i < imgs.length; i++) {
+            var img = imgs[i];
+            var src = img.currentSrc || img.getAttribute('src') || '';
+            var path;
+            try { path = new URL(src, window.location.href).pathname; }
+            catch (e) { path = src; }
+            if (Object.prototype.hasOwnProperty.call(map, path)) {
+                img.setAttribute('alt', map[path]);
+            }
+        }
+    }
+
     // 1.1.1 (parcial) — Imágenes sin alt: marcarlas como decorativas
     function fixImgAlt() {
         var imgs = document.querySelectorAll('img:not([alt])');
@@ -81,6 +98,7 @@
     }
 
     function run() {
+        try { applyAltOverrides(); } catch (e) {}
         try { if (flags.langAttr)      fixLang(); } catch (e) {}
         try { if (flags.skipLink)      fixSkipTarget(); } catch (e) {}
         try { if (flags.imgAlt)        fixImgAlt(); } catch (e) {}
