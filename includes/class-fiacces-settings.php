@@ -25,7 +25,7 @@ class FIAcces_Settings {
             // Atajo de teclado (combinación con Alt)
             'shortcut_key'    => 'A',
             // Texto del aviso emergente sobre el icono
-            'tip_text'        => 'La web de la FIA cumple con estándares de accesibilidad WCAG 2.1 AA.',
+            'tip_text'        => 'Comprometidos con la accesibilidad: ajuste esta web a sus necesidades.',
             // Funcionalidades habilitadas
             'features'        => array(
                 'text_size'    => true,
