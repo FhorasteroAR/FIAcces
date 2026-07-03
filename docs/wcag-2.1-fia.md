@@ -1,4 +1,4 @@
-# Proyecto de implementación WCAG 2.1 AA — Web de la FIA
+# Implementación WCAG 2.1 AA — Web de la FIA
 
 > Sitio objetivo: https://fialp.gob.ar/
 > Nivel de conformidad objetivo: **WCAG 2.1 AA**
@@ -149,6 +149,10 @@ Marca cada criterio: `[ ]` pendiente · `[~]` parcial · `[x]` cumplido.
 - Orden y visibilidad del foco en componentes del tema.
 - Validez del HTML y semántica/ARIA de los widgets del tema.
 
+> Conclusión honesta: instalar s **no hace** que el sitio "cumpla WCAG". Es una
+> capa de asistencia. La conformidad se certifica corrigiendo el sitio según las
+> secciones 3 y 4.
+
 ---
 
 ## 6. Verificación y cierre
@@ -159,8 +163,8 @@ Marca cada criterio: `[ ]` pendiente · `[~]` parcial · `[x]` cumplido.
 3. Zoom 200%/400% y ancho 320px.
 4. Redactar la **Declaración de Accesibilidad** (estado de conformidad, fecha,
    método de evaluación, vía de contacto para reportar barreras).
-5. Ajustar el texto del aviso de FIAcces para que sea **veraz** respecto al estado
-   real (campo "Texto del aviso" en Ajustes → FIAcces).
+5. Ajustar el texto del aviso de  para que sea **veraz** respecto al estado
+   real (campo "Texto del aviso" en Ajustes → ).
 
 ---
 
