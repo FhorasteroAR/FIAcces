@@ -6,7 +6,7 @@
 
 ## 0. Alcance y aclaración
 
-Este miniproyecto define **cómo llevar la web de la FIA a conformidad WCAG 2.1 nivel AA**,
+Este proyecto define **cómo llevar la web de la FIA a conformidad WCAG 2.1 nivel AA**,
 respetando el enfoque que seguimos al construir el plugin **FIAcces**: mejoras
 incrementales, sin romper el tema, verificables y con preferencia por soluciones
 estándar de WordPress.
@@ -118,8 +118,6 @@ Marca cada criterio: `[ ]` pendiente · `[~]` parcial · `[x]` cumplido.
 ---
 
 ## 4. Tareas concretas sobre el sitio (alto impacto / bajo esfuerzo)
-
-Estas suelen ser las que más mueven la aguja en un WordPress institucional:
 
 1. **`<html lang="es">`** en la cabecera del tema (3.1.1).
 2. **Enlace "Saltar al contenido"** al inicio del `<body>`, visible al foco (2.4.1).
