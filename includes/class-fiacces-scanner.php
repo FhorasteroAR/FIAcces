@@ -74,6 +74,7 @@ class FIAcces_Scanner {
             'open'          => __( 'Analizar accesibilidad', 'fiacces' ),
             'close'         => __( 'Cerrar', 'fiacces' ),
             'rescan'        => __( 'Volver a analizar', 'fiacces' ),
+            'mask'          => __( 'Máscara de foco (Tab)', 'fiacces' ),
             'no_issues'     => __( '¡Sin problemas automáticos detectados en esta página!', 'fiacces' ),
             'issues_found'  => __( 'problemas detectados', 'fiacces' ),
             'highlight'     => __( 'Resaltar', 'fiacces' ),

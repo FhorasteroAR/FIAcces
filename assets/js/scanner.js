@@ -328,6 +328,93 @@
         });
     }
 
+    // ---------- máscara de orden de foco (Tab) ----------
+    var maskLayer = null;
+
+    var FOCUSABLE_SEL = 'a[href], button, input:not([type="hidden"]), select, textarea, ' +
+        '[tabindex], [contenteditable="true"], audio[controls], video[controls], summary';
+
+    function isVisible(el) {
+        if (el.disabled) return false;
+        var r = el.getClientRects();
+        if (!r.length) return false;
+        var cs = getComputedStyle(el);
+        return cs.visibility !== 'hidden' && cs.display !== 'none';
+    }
+
+    function focusableInOrder() {
+        var els = Array.prototype.slice.call(document.querySelectorAll(FOCUSABLE_SEL))
+            .filter(function (el) {
+                if (el.closest('#fiacces-root') || el.closest('.fiacces-scanner')) return false;
+                var ti = el.getAttribute('tabindex');
+                if (ti !== null && parseInt(ti, 10) < 0) return false;
+                return isVisible(el);
+            });
+        // Orden Tab: tabindex positivo primero (asc), luego orden del DOM
+        var positive = [], natural = [];
+        els.forEach(function (el) {
+            var ti = parseInt(el.getAttribute('tabindex'), 10);
+            if (ti > 0) positive.push(el); else natural.push(el);
+        });
+        positive.sort(function (a, b) {
+            return parseInt(a.getAttribute('tabindex'), 10) - parseInt(b.getAttribute('tabindex'), 10);
+        });
+        return positive.concat(natural);
+    }
+
+    // Elementos que parecen interactivos pero NO son focusables
+    function clickableNotFocusable(focusSet) {
+        var candidates = document.querySelectorAll('[onclick], [role="button"], [role="link"], [role="tab"], [role="menuitem"]');
+        var out = [];
+        Array.prototype.forEach.call(candidates, function (el) {
+            if (el.closest('#fiacces-root') || el.closest('.fiacces-scanner')) return;
+            if (focusSet.indexOf(el) !== -1) return;
+            var ti = el.getAttribute('tabindex');
+            if (ti !== null && parseInt(ti, 10) >= 0) return;
+            if (isVisible(el)) out.push(el);
+        });
+        return out;
+    }
+
+    function clearMask() {
+        if (maskLayer) { maskLayer.remove(); maskLayer = null; }
+    }
+
+    function badge(el, text, cls) {
+        var r = el.getBoundingClientRect();
+        var b = document.createElement('span');
+        b.className = 'fiacces-mask__badge ' + cls;
+        b.textContent = text;
+        b.style.top = (r.top + window.scrollY) + 'px';
+        b.style.left = (r.left + window.scrollX) + 'px';
+        maskLayer.appendChild(b);
+        var box = document.createElement('span');
+        box.className = 'fiacces-mask__box ' + cls;
+        box.style.top = (r.top + window.scrollY) + 'px';
+        box.style.left = (r.left + window.scrollX) + 'px';
+        box.style.width = r.width + 'px';
+        box.style.height = r.height + 'px';
+        maskLayer.appendChild(box);
+    }
+
+    function toggleMask() {
+        if (maskLayer) { clearMask(); return; }
+        maskLayer = document.createElement('div');
+        maskLayer.className = 'fiacces-mask';
+        document.body.appendChild(maskLayer);
+
+        var order = focusableInOrder();
+        order.forEach(function (el, i) {
+            var ti = parseInt(el.getAttribute('tabindex'), 10);
+            var cls = ti > 0 ? 'fiacces-mask--warn' : 'fiacces-mask--ok';
+            badge(el, String(i + 1) + (ti > 0 ? ' (tabindex ' + ti + ')' : ''), cls);
+        });
+
+        clickableNotFocusable(order).forEach(function (el) {
+            badge(el, '⚠ no focusable', 'fiacces-mask--err');
+        });
+    }
+
     function buildUI() {
         var root = document.createElement('div');
         root.className = 'fiacces-scanner';
@@ -351,7 +438,7 @@
         closeBtn.className = 'fiacces-scanner__close';
         closeBtn.textContent = '✕';
         closeBtn.setAttribute('aria-label', t('close', 'Cerrar'));
-        closeBtn.addEventListener('click', function () { panel.hidden = true; });
+        closeBtn.addEventListener('click', function () { panel.hidden = true; clearMask(); });
         header.appendChild(closeBtn);
 
         summaryEl = document.createElement('div');
@@ -363,6 +450,15 @@
         rescan.textContent = t('rescan', 'Volver a analizar');
         rescan.addEventListener('click', function () { render(scan()); });
 
+        var maskBtn = document.createElement('button');
+        maskBtn.type = 'button';
+        maskBtn.className = 'fiacces-scanner__btn';
+        maskBtn.textContent = t('mask', 'Máscara de foco (Tab)');
+        maskBtn.addEventListener('click', function () {
+            toggleMask();
+            maskBtn.setAttribute('aria-pressed', maskLayer ? 'true' : 'false');
+        });
+
         listEl = document.createElement('div');
         listEl.className = 'fiacces-scanner__list';
 
@@ -373,6 +469,7 @@
         panel.appendChild(header);
         panel.appendChild(summaryEl);
         panel.appendChild(rescan);
+        panel.appendChild(maskBtn);
         panel.appendChild(listEl);
         panel.appendChild(note);
 
