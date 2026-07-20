@@ -97,10 +97,12 @@
                 base = parseFloat(base);
             }
 
+            // Usar prioridad 'important' para ganar a los temas que fijan
+            // font-size con !important (si no, la escala no tendría efecto).
             if (scale === 1) {
-                el.style.fontSize = '';
+                el.style.removeProperty('font-size');
             } else {
-                el.style.fontSize = (base * scale) + 'px';
+                el.style.setProperty('font-size', (base * scale) + 'px', 'important');
             }
         }
     }
