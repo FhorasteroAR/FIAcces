@@ -54,8 +54,6 @@ final class FIAcces {
     private function load_dependencies() {
         require_once FIACCES_PLUGIN_DIR . 'includes/class-fiacces-settings.php';
         require_once FIACCES_PLUGIN_DIR . 'includes/class-fiacces-frontend.php';
-        require_once FIACCES_PLUGIN_DIR . 'includes/class-fiacces-admin.php';
-        require_once FIACCES_PLUGIN_DIR . 'includes/class-fiacces-rest.php';
     }
 
     /** Inicializa hooks de WordPress. */
@@ -66,8 +64,6 @@ final class FIAcces {
         // Inicializar módulos
         FIAcces_Settings::init();
         FIAcces_Frontend::init();
-        FIAcces_Admin::init();
-        FIAcces_REST::init();
 
         // Activación / desactivación
         register_activation_hook( FIACCES_PLUGIN_FILE, array( __CLASS__, 'on_activate' ) );
