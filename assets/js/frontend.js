@@ -1,41 +1,42 @@
 /**
- * FIAcces — Frontend
- * Cumple WCAG 2.1 AA
+ * FIAcces — Barra de accesibilidad para el usuario final.
+ *
+ * Aplica y persiste (en el navegador del visitante) los ajustes de: tamaño de
+ * texto, contraste, filtros de daltonismo, legibilidad, pausa de animaciones y
+ * cursor. No hay interacción con el servidor ni con el administrador.
  */
 (function () {
     'use strict';
 
     var STORAGE_KEY = 'fiacces_prefs';
-    var TIP_KEY     = 'fiacces_tip_dismissed';
-    var settings    = (window.FIAcces && window.FIAcces.settings) || {};
-    var i18n        = (window.FIAcces && window.FIAcces.i18n) || {};
+    var cfg  = window.FIAcces || {};
+    var i18n = cfg.i18n || {};
 
-    // Estado actual del usuario
-    var state = {
+    function t(key, fallback) { return i18n[key] || fallback; }
+
+    var defaults = {
         textScale: 1,
-        contrast: '',   // '', 'high', 'inverted', 'gray'
-        colorblind: '', // '', 'protanopia', 'deuteranopia', 'tritanopia'
+        contrast: '',    // '', 'high', 'inverted', 'gray'
+        colorblind: '',  // '', 'protanopia', 'deuteranopia', 'tritanopia'
         dyslexia: false,
         underline: false,
         pauseAnim: false,
-        cursor: ''      // '', 'large', 'xl'
+        cursor: ''       // '', 'large'
     };
+    var state = Object.assign({}, defaults);
 
-    var root, fab, panel, closeBtn, resetBtn, announceEl, tip, tipClose;
+    var root, fab, panel, closeBtn, announceEl;
     var lastFocus = null;
     var pausedVideos = [];
 
-    // -------- Persistencia --------
+    // -------- Persistencia (localStorage con respaldo en cookie) --------
     function loadState() {
         try {
             var raw = localStorage.getItem(STORAGE_KEY);
             if (raw) Object.assign(state, JSON.parse(raw));
         } catch (e) {
-            // localStorage bloqueado: usar cookie fallback
-            var match = document.cookie.match(/(?:^|;\s*)fiacces_prefs=([^;]+)/);
-            if (match) {
-                try { Object.assign(state, JSON.parse(decodeURIComponent(match[1]))); } catch (_) {}
-            }
+            var m = document.cookie.match(/(?:^|;\s*)fiacces_prefs=([^;]+)/);
+            if (m) { try { Object.assign(state, JSON.parse(decodeURIComponent(m[1]))); } catch (_) {} }
         }
     }
 
@@ -44,48 +45,22 @@
         try {
             localStorage.setItem(STORAGE_KEY, data);
         } catch (e) {
-            // Fallback a cookies (1 año)
-            var expires = new Date();
-            expires.setFullYear(expires.getFullYear() + 1);
+            var exp = new Date();
+            exp.setFullYear(exp.getFullYear() + 1);
             document.cookie = 'fiacces_prefs=' + encodeURIComponent(data) +
-                              '; expires=' + expires.toUTCString() +
-                              '; path=/; SameSite=Lax';
+                '; expires=' + exp.toUTCString() + '; path=/; SameSite=Lax';
         }
     }
 
-    // -------- Aplicar estado al DOM --------
-    function applyState() {
-        var html = document.documentElement;
-
-        // Limpiar clases previas
-        html.className = html.className.replace(/fiacces-(contrast|cursor|daltonism)-\S+/g, '')
-                                       .replace(/fiacces-(dyslexia|underline-links|pause-animations)/g, '')
-                                       .replace(/\s+/g, ' ').trim();
-
-        html.style.setProperty('--fiacces-text-scale', state.textScale);
-        applyTextScale(state.textScale);
-
-        if (state.contrast)   html.classList.add('fiacces-contrast-' + state.contrast);
-        if (state.colorblind) html.classList.add('fiacces-daltonism-' + state.colorblind);
-        if (state.cursor)     html.classList.add('fiacces-cursor-' + state.cursor);
-        if (state.dyslexia)  html.classList.add('fiacces-dyslexia');
-        if (state.underline) html.classList.add('fiacces-underline-links');
-        if (state.pauseAnim) html.classList.add('fiacces-pause-animations');
-
-        applyAnimationPause();
-        syncUI();
-    }
-
     // -------- Escala de texto por elemento --------
-    // Escalar el font-size del <html> solo afecta a textos en rem/em. Muchos temas
-    // fijan el tamaño en px, por lo que recorremos los elementos y multiplicamos su
-    // font-size computado real, guardando el valor base en un data-attribute.
+    // Muchos temas fijan el font-size en px (a veces con !important). Recorremos
+    // cada elemento, guardamos su tamaño base una sola vez y aplicamos la escala
+    // con prioridad 'important' para ganar al CSS del tema.
     function applyTextScale(scale) {
         if (!document.body) return;
         var nodes = document.body.querySelectorAll('*');
         for (var i = 0; i < nodes.length; i++) {
             var el = nodes[i];
-            // No tocar la propia UI del widget
             if (el.closest && el.closest('#fiacces-root')) continue;
 
             var base = el.getAttribute('data-fiacces-base-font');
@@ -98,278 +73,171 @@
             }
 
             if (scale === 1) {
-                el.style.fontSize = '';
+                el.style.removeProperty('font-size');
             } else {
-                el.style.fontSize = (base * scale) + 'px';
+                el.style.setProperty('font-size', (base * scale) + 'px', 'important');
             }
         }
     }
 
+    // -------- Pausa de animaciones/vídeos --------
     function applyAnimationPause() {
         var videos = document.querySelectorAll('video');
         if (state.pauseAnim) {
             videos.forEach(function (v) {
-                if (!v.paused) {
-                    pausedVideos.push(v);
-                    try { v.pause(); } catch (_) {}
-                }
+                if (!v.paused) { pausedVideos.push(v); try { v.pause(); } catch (_) {} }
             });
         } else {
-            pausedVideos.forEach(function (v) {
-                try { v.play().catch(function () {}); } catch (_) {}
-            });
+            pausedVideos.forEach(function (v) { try { v.play().catch(function () {}); } catch (_) {} });
             pausedVideos = [];
         }
     }
 
-    // -------- Sincronizar UI con el estado --------
+    // -------- Aplicar todo el estado al DOM --------
+    function applyState() {
+        var h = document.documentElement;
+        h.className = h.className
+            .replace(/fiacces-(contrast|cursor|daltonism)-\S+/g, '')
+            .replace(/fiacces-(dyslexia|underline-links|pause-animations)/g, '')
+            .replace(/\s+/g, ' ').trim();
+
+        if (state.contrast)   h.classList.add('fiacces-contrast-' + state.contrast);
+        if (state.colorblind) h.classList.add('fiacces-daltonism-' + state.colorblind);
+        if (state.cursor)     h.classList.add('fiacces-cursor-' + state.cursor);
+        if (state.dyslexia)   h.classList.add('fiacces-dyslexia');
+        if (state.underline)  h.classList.add('fiacces-underline-links');
+        if (state.pauseAnim)  h.classList.add('fiacces-pause-animations');
+
+        applyTextScale(state.textScale);
+        applyAnimationPause();
+        syncUI();
+    }
+
+    // -------- Reflejar el estado en los controles del panel --------
     function syncUI() {
         if (!panel) return;
 
-        // Display del % de texto
-        var scaleDisplay = panel.querySelector('[data-display="text-scale"]');
-        if (scaleDisplay) scaleDisplay.textContent = Math.round(state.textScale * 100) + '%';
+        var disp = panel.querySelector('[data-display="text-scale"]');
+        if (disp) disp.textContent = Math.round(state.textScale * 100) + '%';
 
-        // Toggles de contraste
-        panel.querySelectorAll('[data-action="contrast"]').forEach(function (btn) {
-            btn.setAttribute('aria-pressed', btn.dataset.value === state.contrast ? 'true' : 'false');
+        panel.querySelectorAll('[data-action="contrast"]').forEach(function (b) {
+            b.setAttribute('aria-pressed', b.dataset.value === state.contrast ? 'true' : 'false');
+        });
+        panel.querySelectorAll('[data-action="colorblind"]').forEach(function (b) {
+            b.setAttribute('aria-pressed', b.dataset.value === state.colorblind ? 'true' : 'false');
         });
 
-        // Toggles de daltonismo
-        panel.querySelectorAll('[data-action="colorblind"]').forEach(function (btn) {
-            btn.setAttribute('aria-pressed', btn.dataset.value === state.colorblind ? 'true' : 'false');
+        var map = { dyslexia: 'dyslexia', underline: 'underline', 'pause-anim': 'pauseAnim', cursor: 'cursor' };
+        Object.keys(map).forEach(function (action) {
+            var input = panel.querySelector('input[data-action="' + action + '"]');
+            if (!input) return;
+            var val = state[map[action]];
+            input.checked = action === 'cursor' ? val === 'large' : !!val;
         });
-
-        // Toggles de cursor
-        panel.querySelectorAll('[data-action="cursor"]').forEach(function (btn) {
-            btn.setAttribute('aria-pressed', btn.dataset.value === state.cursor ? 'true' : 'false');
-        });
-
-        // Switches
-        var dys = panel.querySelector('[data-action="dyslexia"]');
-        if (dys) dys.checked = state.dyslexia;
-
-        var und = panel.querySelector('[data-action="underline"]');
-        if (und) und.checked = state.underline;
-
-        var pa = panel.querySelector('[data-action="pause-anim"]');
-        if (pa) pa.checked = state.pauseAnim;
     }
 
-    // -------- Anuncios para lectores de pantalla --------
     function announce(text) {
         if (!announceEl) return;
         announceEl.textContent = '';
-        // truco para forzar re-anuncio
         setTimeout(function () { announceEl.textContent = text; }, 50);
     }
 
-    // -------- Acciones --------
-    function handleAction(action, value) {
-        switch (action) {
-            case 'text-increase':
-                state.textScale = Math.min(2, state.textScale + 0.1);
-                break;
-            case 'text-decrease':
-                state.textScale = Math.max(0.8, state.textScale - 0.1);
-                break;
-            case 'contrast':
-                state.contrast = (state.contrast === value) ? '' : value;
-                break;
-            case 'colorblind':
-                state.colorblind = (state.colorblind === value) ? '' : value;
-                break;
-            case 'cursor':
-                state.cursor = (state.cursor === value) ? '' : value;
-                break;
-            case 'dyslexia':
-                state.dyslexia = !state.dyslexia;
-                break;
-            case 'underline':
-                state.underline = !state.underline;
-                break;
-            case 'pause-anim':
-                state.pauseAnim = !state.pauseAnim;
-                break;
-            case 'reset':
-                state = { textScale: 1, contrast: '', colorblind: '', dyslexia: false, underline: false, pauseAnim: false, cursor: '' };
-                break;
+    // -------- Acciones del panel --------
+    function handleAction(action) {
+        switch (action.type) {
+            case 'text-increase': state.textScale = Math.min(2, +(state.textScale + 0.1).toFixed(2)); break;
+            case 'text-decrease': state.textScale = Math.max(0.8, +(state.textScale - 0.1).toFixed(2)); break;
+            case 'contrast':      state.contrast = state.contrast === action.value ? '' : action.value; break;
+            case 'colorblind':    state.colorblind = state.colorblind === action.value ? '' : action.value; break;
+            case 'dyslexia':      state.dyslexia = !state.dyslexia; break;
+            case 'underline':     state.underline = !state.underline; break;
+            case 'pause-anim':    state.pauseAnim = !state.pauseAnim; break;
+            case 'cursor':        state.cursor = state.cursor === 'large' ? '' : 'large'; break;
+            case 'reset':         state = Object.assign({}, defaults); break;
         }
         applyState();
         saveState();
-        announce(i18n.applied || 'Aplicado');
+        announce(t('applied', 'Ajuste aplicado'));
     }
 
-    // -------- Aviso emergente --------
-    function dismissTip(persist) {
-        if (!tip || tip.hidden) {
-            if (persist) persistTipDismissed();
-            return;
-        }
-        // Animación inversa: quitar la clase y ocultar al terminar la transición
-        tip.classList.remove('fiacces-tip--open');
-        var done = function () {
-            tip.hidden = true;
-            tip.removeEventListener('transitionend', done);
-        };
-        tip.addEventListener('transitionend', done);
-        // Fallback por si no se dispara transitionend
-        setTimeout(done, 400);
-        if (persist) persistTipDismissed();
-    }
-
-    function persistTipDismissed() {
-        try { localStorage.setItem(TIP_KEY, '1'); }
-        catch (e) {
-            var expires = new Date();
-            expires.setFullYear(expires.getFullYear() + 1);
-            document.cookie = TIP_KEY + '=1; expires=' + expires.toUTCString() + '; path=/; SameSite=Lax';
-        }
-    }
-
-    function maybeShowTip() {
-        if (!tip) return;
-        var dismissed = false;
-        try { dismissed = localStorage.getItem(TIP_KEY) === '1'; }
-        catch (e) { dismissed = /(?:^|;\s*)fiacces_tip_dismissed=1/.test(document.cookie); }
-        if (dismissed) return;
-
-        tip.hidden = false;
-        // Forzar reflow para que la transición se ejecute desde scale(0)
-        void tip.offsetWidth;
-        tip.classList.add('fiacces-tip--open');
-    }
-
-    // -------- Modal: abrir / cerrar --------
+    // -------- Abrir / cerrar panel --------
     function openPanel() {
-        if (!panel) return;
-        dismissTip(true);
         lastFocus = document.activeElement;
         panel.hidden = false;
         fab.setAttribute('aria-expanded', 'true');
-        // Foco al primer elemento interactivo del panel
         setTimeout(function () {
-            var first = panel.querySelector('button, [tabindex]:not([tabindex="-1"]), input');
+            var first = panel.querySelector('button, input, [tabindex]:not([tabindex="-1"])');
             if (first) first.focus();
-        }, 50);
-        announce(i18n.announce_open || 'Panel abierto');
+        }, 30);
+        announce(t('announce_open', 'Panel de accesibilidad abierto'));
     }
 
     function closePanel() {
-        if (!panel || panel.hidden) return;
+        if (panel.hidden) return;
         panel.hidden = true;
         fab.setAttribute('aria-expanded', 'false');
         if (lastFocus && lastFocus.focus) lastFocus.focus();
-        announce(i18n.announce_close || 'Panel cerrado');
+        announce(t('announce_close', 'Panel de accesibilidad cerrado'));
     }
 
-    // -------- Focus trap --------
     function trapFocus(e) {
-        if (panel.hidden) return;
-        if (e.key !== 'Tab') return;
-
-        var focusable = panel.querySelectorAll(
-            'button:not([disabled]), input:not([disabled]), [tabindex]:not([tabindex="-1"])'
-        );
-        if (focusable.length === 0) return;
-
-        var first = focusable[0];
-        var last  = focusable[focusable.length - 1];
-
-        if (e.shiftKey && document.activeElement === first) {
-            e.preventDefault();
-            last.focus();
-        } else if (!e.shiftKey && document.activeElement === last) {
-            e.preventDefault();
-            first.focus();
-        }
+        if (panel.hidden || e.key !== 'Tab') return;
+        var f = panel.querySelectorAll('button:not([disabled]), input:not([disabled]), [tabindex]:not([tabindex="-1"])');
+        if (!f.length) return;
+        var first = f[0], last = f[f.length - 1];
+        if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+        else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
     }
 
-    // -------- Init --------
+    // -------- Inicialización --------
     function init() {
-        root       = document.getElementById('fiacces-root');
+        root = document.getElementById('fiacces-root');
         if (!root) return;
-
         fab        = document.getElementById('fiacces-toggle');
         panel      = document.getElementById('fiacces-panel');
         closeBtn   = document.getElementById('fiacces-close');
-        resetBtn   = document.getElementById('fiacces-reset');
         announceEl = document.getElementById('fiacces-announce');
-        tip        = document.getElementById('fiacces-tip');
-        tipClose   = document.getElementById('fiacces-tip-close');
 
         loadState();
         applyState();
-        maybeShowTip();
 
-        if (tipClose) tipClose.addEventListener('click', function () { dismissTip(true); });
-
-        // Aplicar color primario desde admin
-        if (settings.primaryColor) {
-            root.style.setProperty('--fiacces-primary', settings.primaryColor);
-        }
-
-        // Toggle del FAB
-        fab.addEventListener('click', function () {
-            if (panel.hidden) openPanel(); else closePanel();
-        });
-
-        // Cerrar (solo con la X o el botón Cerrar, NO al hacer clic fuera)
+        fab.addEventListener('click', function () { panel.hidden ? openPanel() : closePanel(); });
         if (closeBtn) closeBtn.addEventListener('click', closePanel);
 
-        // Reset
-        if (resetBtn) resetBtn.addEventListener('click', function () { handleAction('reset'); });
-
-        // Botones con data-action / data-value
         panel.addEventListener('click', function (e) {
             var btn = e.target.closest('[data-action]');
-            if (!btn || btn === resetBtn) return;
-            if (btn.tagName === 'INPUT') return; // los checkbox tienen su propio handler
-            var action = btn.dataset.action;
-            var value  = btn.dataset.value || '';
-            handleAction(action, value);
+            if (!btn || btn.tagName === 'INPUT') return;
+            handleAction({ type: btn.dataset.action, value: btn.dataset.value || '' });
         });
 
-        // Checkboxes (switches)
         panel.addEventListener('change', function (e) {
             if (e.target.tagName === 'INPUT' && e.target.dataset.action) {
-                handleAction(e.target.dataset.action);
+                handleAction({ type: e.target.dataset.action });
             }
         });
 
-        // Teclado: Escape cierra el panel
         document.addEventListener('keydown', function (e) {
-            if (e.key === 'Escape' && !panel.hidden) {
-                e.preventDefault();
-                closePanel();
-            }
-            // Focus trap
+            if (e.key === 'Escape' && !panel.hidden) { e.preventDefault(); closePanel(); }
             if (!panel.hidden) trapFocus(e);
-
-            // Atajo Alt + tecla configurada
             if (e.altKey && !e.ctrlKey && !e.shiftKey && !e.metaKey) {
-                var key = (settings.shortcutKey || 'A').toUpperCase();
+                var key = (cfg.shortcutKey || 'A').toUpperCase();
                 if (e.key.toUpperCase() === key) {
                     e.preventDefault();
-                    if (panel.hidden) openPanel(); else closePanel();
+                    panel.hidden ? openPanel() : closePanel();
                 }
             }
         });
 
-        // Re-aplicar ajustes si entra contenido nuevo al DOM (AJAX, sliders, etc.)
+        // Re-aplicar ajustes al contenido cargado dinámicamente (AJAX, sliders…).
         if (window.MutationObserver) {
-            var reapplyTimer = null;
-            var observer = new MutationObserver(function () {
+            var timer = null;
+            new MutationObserver(function () {
                 if (state.pauseAnim) applyAnimationPause();
-                // Debounce: re-escalar el texto solo si hay una escala activa
                 if (state.textScale !== 1) {
-                    clearTimeout(reapplyTimer);
-                    reapplyTimer = setTimeout(function () {
-                        applyTextScale(state.textScale);
-                    }, 150);
+                    clearTimeout(timer);
+                    timer = setTimeout(function () { applyTextScale(state.textScale); }, 150);
                 }
-            });
-            observer.observe(document.body, { childList: true, subtree: true });
+            }).observe(document.body, { childList: true, subtree: true });
         }
     }
 
