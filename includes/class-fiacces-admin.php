@@ -199,41 +199,6 @@ class FIAcces_Admin {
                         </table>
                     </div>
 
-                    <div class="fiacces-admin-card">
-                        <h2><?php esc_html_e( 'Ayudas de conformidad WCAG', 'fiacces' ); ?></h2>
-                        <p class="description">
-                            <?php esc_html_e( 'Correcciones automáticas y seguras aplicadas al sitio. Ayudan a cumplir criterios "mecánicos" de WCAG 2.1 AA, pero NO garantizan conformidad: el contenido (textos alt significativos, subtítulos, contraste, encabezados) debe revisarse manualmente.', 'fiacces' ); ?>
-                        </p>
-
-                        <table class="form-table" role="presentation">
-                            <?php
-                            $remediation_labels = array(
-                                'skip_link'      => __( 'Enlace «Saltar al contenido» (2.4.1)', 'fiacces' ),
-                                'focus_visible'  => __( 'Reforzar el foco visible del teclado (2.4.7)', 'fiacces' ),
-                                'lang_attr'      => __( 'Definir el idioma de la página si falta (3.1.1)', 'fiacces' ),
-                                'img_alt'        => __( 'Marcar como decorativas las imágenes sin alt (1.1.1)', 'fiacces' ),
-                                'external_links' => __( 'Avisar enlaces que abren en nueva pestaña (2.4.4)', 'fiacces' ),
-                                'nav_labels'     => __( 'Nombrar los menús de navegación sin etiqueta (4.1.2)', 'fiacces' ),
-                            );
-                            foreach ( $remediation_labels as $key => $label ) :
-                                ?>
-                                <tr>
-                                    <th scope="row"><label for="fiacces_rem_<?php echo esc_attr( $key ); ?>"><?php echo esc_html( $label ); ?></label></th>
-                                    <td>
-                                        <label class="fiacces-admin-switch">
-                                            <input type="checkbox"
-                                                   id="fiacces_rem_<?php echo esc_attr( $key ); ?>"
-                                                   name="<?php echo esc_attr( FIACCES_OPTION_KEY ); ?>[remediation][<?php echo esc_attr( $key ); ?>]"
-                                                   value="1"
-                                                   <?php checked( ! empty( $opts['remediation'][ $key ] ) ); ?>>
-                                            <?php esc_html_e( 'Activada', 'fiacces' ); ?>
-                                        </label>
-                                    </td>
-                                </tr>
-                            <?php endforeach; ?>
-                        </table>
-                    </div>
-
                 </div>
 
                 <div class="fiacces-admin-actions">
