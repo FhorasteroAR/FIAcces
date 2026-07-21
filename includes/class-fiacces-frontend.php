@@ -17,9 +17,43 @@ class FIAcces_Frontend {
         add_action( 'wp_head',            array( __CLASS__, 'inline_settings' ), 5 );
     }
 
+    /**
+     * ¿Estamos dentro del editor/vista previa de un maquetador visual?
+     *
+     * La barra escala el font-size de cada elemento con prioridad, lo que
+     * interfiere con la edición (p. ej. cambiar el tamaño de fuente en
+     * Elementor no surtiría efecto). Es una herramienta para el visitante, no
+     * para el entorno de edición, así que no debe cargarse ahí.
+     */
+    public static function is_builder_context() {
+        // Elementor: iframe de vista previa o modo edición.
+        if ( isset( $_GET['elementor-preview'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification
+            return true;
+        }
+        if ( did_action( 'elementor/loaded' )
+            && class_exists( '\Elementor\Plugin' )
+            && isset( \Elementor\Plugin::$instance->editor )
+            && \Elementor\Plugin::$instance->editor->is_edit_mode() ) {
+            return true;
+        }
+
+        // Otros maquetadores habituales.
+        if ( isset( $_GET['fl_builder'] ) ) { // Beaver Builder. phpcs:ignore WordPress.Security.NonceVerification
+            return true;
+        }
+        if ( isset( $_GET['brizy-edit'] ) || isset( $_GET['brizy-edit-iframe'] ) ) { // Brizy. phpcs:ignore WordPress.Security.NonceVerification
+            return true;
+        }
+        if ( function_exists( 'et_core_is_fb_enabled' ) && et_core_is_fb_enabled() ) { // Divi. phpcs:ignore
+            return true;
+        }
+
+        return false;
+    }
+
     /** Encola CSS y JS del frontend. */
     public static function enqueue_assets() {
-        if ( is_admin() ) {
+        if ( is_admin() || self::is_builder_context() ) {
             return;
         }
 
@@ -65,7 +99,7 @@ class FIAcces_Frontend {
      * ANTES de que se pinte el contenido (evita "flash of unstyled content").
      */
     public static function inline_settings() {
-        if ( is_admin() ) {
+        if ( is_admin() || self::is_builder_context() ) {
             return;
         }
 
@@ -127,7 +161,7 @@ class FIAcces_Frontend {
 
     /** Imprime el HTML del botón flotante y el panel modal en el footer. */
     public static function render_widget() {
-        if ( is_admin() ) {
+        if ( is_admin() || self::is_builder_context() ) {
             return;
         }
         $opts = FIAcces_Settings::get_options();
